@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>Import IFC Files</Name>
+    <Assembly>IFCtoREVIT\RevitPlugin.dll</Assembly>
+    <AddInId>4BB49F2D-A774-4818-BEB8-EF95BB2CEA1F</AddInId>
+    <FullClassName>IFCtoRevit.Main</FullClassName>
+    <Text>By: Marwa Mohamed and Ibrahim Saad </Text>
+    <VisibilityMode>AlwaysVisible</VisibilityMode>
+    <LanguageType>Unknown</LanguageType>
+    <VendorId></VendorId>
+    <VendorDescription>Properly open IFC files exported from Etabs...</VendorDescription>
+  </AddIn>
+</RevitAddIns>

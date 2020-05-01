@@ -1,0 +1,8 @@
+.vs/
+packages/
+IFCLoader/.vs/
+IFCLoader/bin/
+IFCLoader/obj/
+RevitPlugin/.vs/
+RevitPlugin/bin/
+RevitPlugin/obj/
