@@ -4,23 +4,21 @@ using IFCtoRevit.UI;
 namespace IFCtoRevit
 {
 
+    /// <summary>
     /// Setup whole plugins interface with tabs, panels, buttons,...
+    /// </summary>
     public class SetupInterface
-    {
-        #region Constructor
-        public SetupInterface()
-        {
+    { 
+		#region Methods
 
-        }
-
-        #endregion
-
-        #region Public Methods
-
-        public void Initialize(UIControlledApplication app)
+		/// <summary>
+		/// Initializes the specified application.
+		/// </summary>
+		/// <param name="app">The application.</param>
+		public static void Initialize(UIControlledApplication app)
         {
             // Create ribbon tab.
-            string tabName = "ITI";
+            string tabName = "IFC to Revit";
             app.CreateRibbonTab(tabName);
 
             // Create the ribbon panels.
@@ -32,7 +30,7 @@ namespace IFCtoRevit
                 Label = "Import IFC",
                 Panel = annotateCommandsPanel,
                 Tooltip = "Import IFC files exported from CSI ETABS...",
-                CommandNamespacePath = ImportIFC.GetPath(),
+                CommandNamespacePath = ImportIfcCommand.GetPath(),
                 IconImageName = "pushbutton.png",
                 TooltipImageName = "tooltipimage.png"
             };

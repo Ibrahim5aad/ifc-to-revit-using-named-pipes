@@ -1,55 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Autodesk.Revit.DB;
-using Autodesk.Revit.UI;
-using Autodesk.Revit.Attributes;
-using System.IO;
+﻿using Autodesk.Revit.DB;
+using IFCtoRevit.Base;
 using IFCtoRevit.IFCLoader;
-using System.Xml.Serialization;
-using System.IO.Pipes;
+using IFCtoRevit.Services;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.Windows.Forms;
-using IFCtoRevit.UI;
-using System.Drawing;
+using System.IO;
+using System.IO.Pipes;
 using System.Reflection;
+using System.Windows.Input;
+using System.Xml.Serialization;
 
-
-
-namespace IFCtoRevit
+namespace IFCtoRevit.ViewModels
 {
+	public partial class MainWindowViewModel : ViewModelBase
+	{
+        #region Fields
 
-    [Transaction(TransactionMode.Manual)]
-    public partial class ImportIFC : IExternalCommand
-    {
-        public static int revitVersion;
+        private Process _ifcLoader;
 
-        List<FamilyInstance> colInstances;
-        List<FamilyInstance> incInstances;
-        List<FamilyInstance> beamInstances;
-        List<Grid>[] grids;
-        List<Level> levels;
-        List<Floor> floors;
-        List<FamilyInstance> colStInstances;
-        List<FamilyInstance> BraceInstances;
-        List<FamilyInstance> beamStInstances;
+        #endregion
 
+        #region Constructor
 
-        int lvlNumber = 0;
-        byte xGridName = 65; //ASCII code of 'A'
-        int yGridName = 1;
-
-        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
+        /// </summary>
+        public MainWindowViewModel()
         {
-
-            UIDocument uidoc = commandData.Application.ActiveUIDocument;
-            Document doc = uidoc.Document;
-            revitVersion = Convert.ToInt32(doc.Application.VersionName.Split(' ').Last());
+            RunModellingCommand = new RelayCommand(RunModelling);
 
             //The IFC Loader process
             string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-            var ifcLoader = new Process
+            _ifcLoader = new Process
             {
                 StartInfo =
                 {
@@ -58,25 +42,27 @@ namespace IFCtoRevit
                     UseShellExecute = false
                 }
             };
+        }
 
-            Application.EnableVisualStyles();
-            MainWindow main = new MainWindow();
+        #endregion
 
-            Label lbl = new Label();
-            lbl.Location = new System.Drawing.Point(90, 110);
-            lbl.AutoSize = true;
-            lbl.Font = new Font("Calibri", 12);
-            lbl.Text = $"Revit Version: {revitVersion}";
-            main.Controls.Add(lbl);
+        #region Commands
+        public ICommand RunModellingCommand { get; }
 
-            //Create an input server pipe to recieve the XML data from the IFC Loader
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Runs the modelling.
+        /// </summary>
+        private void RunModelling()
+        {
             using (var pipeRead = new AnonymousPipeServerStream(PipeDirection.In, HandleInheritability.Inheritable))
             {
-                ifcLoader.StartInfo.Arguments = pipeRead.GetClientHandleAsString();
-                void startLoader(object o, EventArgs e) => ifcLoader.Start();
-                main.loaderBtn.Click += startLoader;
-                Application.Run(main);
+                _ifcLoader.StartInfo.Arguments = pipeRead.GetClientHandleAsString();
 
+                _ifcLoader.Start(); 
 
                 //Lists of strings to recieve the XML data
                 List<string> columnsResult = new List<string>();
@@ -89,11 +75,7 @@ namespace IFCtoRevit
                 List<string> beamsStResult = new List<string>();
                 List<string> bracesResult = new List<string>();
 
-                if (main.isCancelled == true)
-                {
-                    ifcLoader.Close();
-                    return Result.Cancelled;
-                }
+
                 pipeRead.DisposeLocalCopyOfClientHandle();
 
                 try
@@ -164,8 +146,8 @@ namespace IFCtoRevit
                 }
                 finally
                 {
-                    ifcLoader.WaitForExit();
-                    ifcLoader.Close();
+                    _ifcLoader.WaitForExit();
+                    _ifcLoader.Close();
 
                 }
 
@@ -244,32 +226,32 @@ namespace IFCtoRevit
 
 
                 //Creating Levels 
-                void createLevels() => levels = CreateLevels(doc, storeys);
-                InitTransaction(doc, "Create Levels", createLevels);
+                void createLevels() => levels = CreateLevels(DocumentManager.Instance.CurrentDocument, storeys);
+                InitTransaction(DocumentManager.Instance.CurrentDocument, "Create Levels", createLevels);
 
                 //Creating Columns 
-                void createColumns() => colInstances = CreateColumnInstance(doc, cols, "Concrete-Rectangular-Column", true, storeys);
-                InitTransaction(doc, "Create Columns", createColumns);
+                void createColumns() => colInstances = CreateColumnInstance(DocumentManager.Instance.CurrentDocument, cols, "Concrete-Rectangular-Column", true, storeys);
+                InitTransaction(DocumentManager.Instance.CurrentDocument, "Create Columns", createColumns);
 
                 //Creating Inclined Columns 
-                void createInclines() => incInstances = CreateInclinedInstance(doc, incss, "Concrete-Rectangular-Column", true, storeys);
-                InitTransaction(doc, "Create Inclined Columns", createInclines);
+                void createInclines() => incInstances = CreateInclinedInstance(DocumentManager.Instance.CurrentDocument, incss, "Concrete-Rectangular-Column", true, storeys);
+                InitTransaction(DocumentManager.Instance.CurrentDocument, "Create Inclined Columns", createInclines);
 
                 //Creating Beams
-                void createBeams() => beamInstances = CreateBeamInstance(doc, beammms, "Concrete-Rectangular Beam");
-                InitTransaction(doc, "Create Beams", createBeams);
+                void createBeams() => beamInstances = CreateBeamInstance(DocumentManager.Instance.CurrentDocument, beammms, "Concrete-Rectangular Beam");
+                InitTransaction(DocumentManager.Instance.CurrentDocument, "Create Beams", createBeams);
 
                 //Creating steel Columns 
-                void createSteelColumns() => colStInstances = CreateSteelColumnInstance(doc, StCol, "W Shapes-Column", true, storeys);
-                InitTransaction(doc, "Create Columns", createSteelColumns);
+                void createSteelColumns() => colStInstances = CreateSteelColumnInstance(DocumentManager.Instance.CurrentDocument, StCol, "W Shapes-Column", true, storeys);
+                InitTransaction(DocumentManager.Instance.CurrentDocument, "Create Columns", createSteelColumns);
 
                 //Creating Braces 
-                void createBraces() => BraceInstances = CreateBraceInstance(doc, StBrace, "L-Angle-Column", true, storeys);
-                InitTransaction(doc, "Create Braces", createBraces);
+                void createBraces() => BraceInstances = CreateBraceInstance(DocumentManager.Instance.CurrentDocument, StBrace, "L-Angle-Column", true, storeys);
+                InitTransaction(DocumentManager.Instance.CurrentDocument, "Create Braces", createBraces);
 
                 //Creating steel Beams
-                void createSteelBeams() => beamStInstances = CreateSteelBeamInstance(doc, Stbeam, "W Shapes");
-                InitTransaction(doc, "Create steel Beams", createSteelBeams);
+                void createSteelBeams() => beamStInstances = CreateSteelBeamInstance(DocumentManager.Instance.CurrentDocument, Stbeam, "W Shapes");
+                InitTransaction(DocumentManager.Instance.CurrentDocument, "Create steel Beams", createSteelBeams);
 
 
                 //Creating Grids
@@ -281,17 +263,30 @@ namespace IFCtoRevit
                 List<double> xGridLocations = GetXGridsLocations(gridsIntersections);
                 List<double> yGridLocations = GetYGridsLocations(gridsIntersections);
 
-                void creatGrids() => grids = CreateGrids(doc, xGridLocations, yGridLocations);
-                InitTransaction(doc, "Create Grids", creatGrids);
+                void creatGrids() => grids = CreateGrids(DocumentManager.Instance.CurrentDocument, xGridLocations, yGridLocations);
+                InitTransaction(DocumentManager.Instance.CurrentDocument, "Create Grids", creatGrids);
 
 
                 //Creating Floors
-                void createFloors() => floors = CreateFloor(doc, floorSlabs);
-                InitTransaction(doc, "Create Floors", createFloors);
+                void createFloors() => floors = CreateFloor(DocumentManager.Instance.CurrentDocument, floorSlabs);
+                InitTransaction(DocumentManager.Instance.CurrentDocument, "Create Floors", createFloors);
             }
 
-            return Result.Succeeded;
         }
 
+
+        /// <summary>
+        /// Provides the required validation logic of
+        /// any property you want to add validation for.
+        /// </summary>
+        /// <param name="propertyName"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public override bool Validate(string propertyName, object value)
+        {
+            return true;
+        }
+
+        #endregion
     }
 }

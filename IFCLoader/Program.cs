@@ -35,8 +35,7 @@ namespace IFCtoRevit.IFCLoader
 
             //Loading the file
             IFC_Loader.LoadFile(LoaderWin.FilePath);
-
-
+             
             //Getting the IFC Elements
             IFC_Loader.GetIFCElements();
 

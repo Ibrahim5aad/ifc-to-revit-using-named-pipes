@@ -1,0 +1,44 @@
+﻿<Window
+	x:Class="IFCtoRevit.UI.Windows.MainWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	Title="IFC to Revit"
+	Width="470"
+	Height="240"
+	BorderBrush="#333"
+	BorderThickness="0.5"
+	ResizeMode="NoResize"
+	ShowInTaskbar="True"
+	WindowStartupLocation="CenterScreen"
+	WindowStyle="SingleBorderWindow"
+	mc:Ignorable="d">
+	<Window.Resources />
+	<Grid HorizontalAlignment="Center">
+		<StackPanel
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Center"
+			Orientation="Horizontal">
+			<Button
+				Width="100"
+				Height="30"
+				HorizontalAlignment="Center"
+				Content="Load IFC File" />
+			<Button
+				Width="100"
+				Height="30"
+				Margin="10,0,0,0"
+				HorizontalAlignment="Center"
+				Command="{Binding RunModellingCommand}"
+				Content="Run" />
+			<Button
+				Width="100"
+				Height="30"
+				Margin="10,0,0,0"
+				HorizontalAlignment="Center"
+				Click="btnClose_Click"
+				Content="Cancel" />
+		</StackPanel>
+	</Grid>
+</Window>

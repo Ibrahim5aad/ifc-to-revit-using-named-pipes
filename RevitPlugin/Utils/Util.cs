@@ -1439,25 +1439,7 @@ const T f = ( ay * bx ) - ( ax * by );
         + PointArrayString( curve.Tessellate() );
     }
 
-    /// <summary>
-    /// Convert a UnitSymbolType enumeration value
-    /// to a brief human readable abbreviation string.
-    /// </summary>
-    public static string UnitSymbolTypeString(
-      UnitSymbolType u )
-    {
-      string s = u.ToString();
-
-      Debug.Assert( s.StartsWith( "UST_" ),
-        "expected UnitSymbolType enumeration value "
-        + "to begin with 'UST_'" );
-
-      s = s.Substring( 4 )
-        .Replace( "_SUP_", "^" )
-        .ToLower();
-
-      return s;
-    }
+    
     #endregion // Formatting
 
     #region Display a message

@@ -13,37 +13,89 @@
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <PropertyGroup Condition="$(Configuration.EndsWith('2016'))">
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(Configuration.EndsWith('2017'))">
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(Configuration.EndsWith('2018'))">
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(Configuration.EndsWith('2019'))">
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(Configuration.EndsWith('2020'))">
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(Configuration.EndsWith('2021'))">
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(Configuration.EndsWith('2022'))">
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(Configuration.EndsWith('2023'))">
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(Configuration.StartsWith('Debug20'))">
+    <RevitVerion>$(Configuration.Substring(5, 4))</RevitVerion>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(Configuration.StartsWith('Release20'))">
+    <RevitVerion>$(Configuration.Substring(7, 4))</RevitVerion>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(Configuration.StartsWith('Debug20'))">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <OutputPath>bin\Debug$(RevitVerion)\</OutputPath>
+    <DefineConstants>TRACE;Revit$(RevitVerion);DEBUG$(RevitVerion);DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition="$(Configuration.StartsWith('Release20'))">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <OutputPath>bin\Release$(RevitVerion)\</OutputPath>
+    <DefineConstants>TRACE;Revit$(RevitVerion);RELEASE$(RevitVerion);RELEASE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug2016|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug2017|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug2018|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug2019|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug2020|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug2021|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug2022|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug2023|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release2016|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release2017|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release2018|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release2019|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release2020|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release2021|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release2022|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release2023|AnyCPU'" />
   <ItemGroup>
     <Reference Include="Esent.Interop, Version=1.9.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\ManagedEsent.1.9.4\lib\net40\Esent.Interop.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="RevitAPI, Version=19.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ext\Revit\RevitAPI.dll</HintPath>
+    <Reference Include="AdWindows">
+      <HintPath>$(ProgramW6432)\Autodesk\Revit $(RevitVerion)\AdWindows.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="RevitAPIUI, Version=19.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ext\Revit\RevitAPIUI.dll</HintPath>
+    <Reference Include="RevitAPI">
+      <HintPath>$(ProgramW6432)\Autodesk\Revit $(RevitVerion)\RevitAPI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="RevitAPIUI">
+      <HintPath>$(ProgramW6432)\Autodesk\Revit $(RevitVerion)\RevitAPIUI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -59,32 +111,32 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\ImportIFC - Helper Function.cs" />
-    <Compile Include="Commands\ImportIFC.cs" />
-    <Compile Include="Commands\JoinElements.cs" />
+    <Compile Include="Base\RelayCommand.cs" />
+    <Compile Include="Base\ViewModelBase.cs" />
+    <Compile Include="Services\DocumentManager.cs" />
+    <Compile Include="ViewModels\MainWindowViewModel.Helpers.cs" />
+    <Compile Include="Commands\ImportIfcCommand.cs" />
+    <Compile Include="Models\Enums\ErrorType.cs" />
+    <Compile Include="Models\Error.cs" />
     <Compile Include="PluginAssembly.cs" />
-    <Compile Include="Main.cs" />
+    <Compile Include="App.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\ResourceImage.cs" />
-    <Compile Include="UI\MainWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\MainWindow.Designer.cs">
-      <DependentUpon>MainWindow.cs</DependentUpon>
+    <Compile Include="Services\Messenger\IMessenger.cs" />
+    <Compile Include="Services\Messenger\Messenger.cs" />
+    <Compile Include="UI\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Revit\PushButtonDataModel.cs" />
     <Compile Include="UI\Revit\RevitPushButton.cs" />
     <Compile Include="SetupInterface.cs" />
+    <Compile Include="Utilities\Extensions\ExpressionExtensions.cs" />
     <Compile Include="Utils\Util.cs" />
+    <Compile Include="ViewModels\MainWindowViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="UI\MainWindow.resx">
-      <DependentUpon>MainWindow.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Images\Icons\ifc_icon.jpg" />
@@ -101,5 +153,12 @@
       <Name>IFC_Loader</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Page Include="UI\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
